@@ -7,19 +7,22 @@ public class HammingDistance {
 			+ "00000100001111010100100100001011110100001011001010010001";
 	private LFSR l;
 	private String compS;
+	private int length;
+	private int[] startState;
 
-	public HammingDistance(LFSR l) {
+	public HammingDistance(LFSR l, int length, int[] startState) {
 		this.l = l;
 		this.compS = "";
-	}
-	public void setComperationString(String s){
-		compS = s;
-	}
-	private void setStringFromLFSR(){
-		compS = l.calcSequence();
+		this.length = length;
+		this.startState = startState;
 	}
 
-	public double calc() {
+	public void setComperationString(String s) {
+		compS = s;
+	}
+
+	public double calcDistance() {
+		compS = l.calcSequence();
 		double distance = 0;
 		char c1;
 		char c2;
@@ -30,29 +33,29 @@ public class HammingDistance {
 				distance++;
 			}
 		}
-		// correlation 
+		// correlation
 		double p = 0;
 		p = 1 - (distance / z.length());
-		//System.out.println("distance: " + distance + " p = " + p);
+		// System.out.println("distance: " + distance + " p = " + p);
 		return p;
 	}
 
 	public int[] calcKey() {
+		
+		l.setReg(startState);
 		double p = 0;
 		double pmax = 0;
-		int indexmax = 0;
-		int[] r = l.getRegister(0);
-		for (int i = 0; i < Math.pow(2, r.length); i++) { //r.length 2^17 max = 131 072
-			l.changeInitialRegister();
-			setStringFromLFSR();
-			p = calc();
+		int[] key = new int[length];
+		int[] tempkey = new int[length];
+		for (int i = 0; i < Math.pow(2, length); i++) { // r.length 2^17 max =
+														// 131 072'
+			tempkey = l.incReg();
+			p = calcDistance();
 			if (p > pmax) {
 				pmax = p;
-				indexmax = i;
+				key = tempkey;
 			}
 		}
-		l.changeInitialRegister();
-		int[] key = l.getRegister(indexmax);
 		for (int i = 0; i < key.length; i++) {
 			System.out.print(key[i]);
 		}
@@ -60,8 +63,8 @@ public class HammingDistance {
 		System.out.println("pmax: " + pmax);
 		return key;
 	}
-	
-	public String getZ(){
+
+	public String getZ() {
 		return z;
 	}
 }

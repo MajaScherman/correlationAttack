@@ -7,14 +7,15 @@ public class LFSR {
 	private int field;
 	private int[] polynomial;
 	private int[] register;
-	private int[] searchRegister;
+	private int length;
+	private int[] keyState;
 
 	public LFSR(int field, int[] polynomial) {
 		this.field = field;
 		this.polynomial = polynomial;
-		this.register = Arrays.copyOf(polynomial,polynomial.length); // initial state is polynomial, to be
-									// shifted
-		this.searchRegister = Arrays.copyOf(polynomial,polynomial.length);
+		this.register = new int[polynomial.length];
+		length = polynomial.length;
+		keyState = new int[polynomial.length];
 
 	}
 
@@ -48,34 +49,25 @@ public class LFSR {
 		}
 		return s;
 	}
-	public int[] getRegister(int indexmax){
-		register = Arrays.copyOf(polynomial,polynomial.length);
-		for (int i = 0; i < indexmax; i++) {
-			shift();
-		}
-		return register;
+
+	public void setReg(int[] reg) {
+		register = Arrays.copyOf(reg, length);
+		keyState = Arrays.copyOf(reg, length);
 	}
-	
-	public void setRegister(int[] key){
-		register = key;
-		System.out.println();
-		for (int i = 0; i < register.length; i++) {
-			System.out.print(register[i]);
+
+	public int[] incReg() {
+		register = Arrays.copyOf(keyState, length);
+		register[0]++;
+		for (int i = 0; i < length - 1; i++) {
+			if (register[i] == 2) {
+				register[i] = register[i] % 2;
+				register[i + 1]++;
+			} else {
+				break;
+			}
 		}
-	}
-	
-	public void changeInitialRegister(){
-		shiftSearchRegister();
-	}
-	private int shiftSearchRegister(){
-		int i = 0;
-		int out = searchRegister[i];
-		int newS1 = arithmetic();
-		for (i = 0; i < searchRegister.length - 1; i++) {
-			searchRegister[i] = searchRegister[i + 1];
-		}
-		searchRegister[i] = newS1;
-		return out;
+		keyState = Arrays.copyOf(register, length);
+		return keyState;
 	}
 
 }

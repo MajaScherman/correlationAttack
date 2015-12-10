@@ -20,11 +20,8 @@ public class KeyStreamGenerator {
 		String s3 = "";
 
 		s1 = l1.calcSequence();
-		System.out.println(s1.length());
 		s2 = l2.calcSequence();
-		System.out.println(s2.length());
 		s3 = l3.calcSequence();
-		System.out.println(s3.length());
 		for (int i = 0; i < s1.length(); i++) {
 			if ((s1.charAt(i) + (int) s2.charAt(i) + (int) s3.charAt(i)) - 48 * 3 > 1) {
 				s += 1;
