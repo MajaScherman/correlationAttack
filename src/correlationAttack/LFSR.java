@@ -13,9 +13,9 @@ public class LFSR {
 	public LFSR(int field, int[] polynomial) {
 		this.field = field;
 		this.polynomial = polynomial;
-		this.register = new int[polynomial.length];
-		length = polynomial.length;
-		keyState = new int[polynomial.length];
+		this.register = new int[polynomial.length - 1];
+		length = polynomial.length - 1;
+		keyState = new int[polynomial.length - 1];
 
 	}
 
@@ -54,7 +54,6 @@ public class LFSR {
 		register = Arrays.copyOf(reg, length);
 		keyState = Arrays.copyOf(reg, length);
 	}
-
 	public int[] incReg() {
 		register = Arrays.copyOf(keyState, length);
 		register[0]++;
@@ -68,6 +67,10 @@ public class LFSR {
 		}
 		keyState = Arrays.copyOf(register, length);
 		return keyState;
+	}
+
+	public int[] getKeyState() {
+		return Arrays.copyOf(keyState, length);
 	}
 
 }
